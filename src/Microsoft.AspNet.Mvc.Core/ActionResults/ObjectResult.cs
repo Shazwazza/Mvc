@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.Framework.OptionsModel;
@@ -43,11 +44,23 @@ namespace Microsoft.AspNet.Mvc
             if (selectedFormatter == null)
             {
                 // No formatter supports this.
-                context.HttpContext.Response.StatusCode = 406;
+                await NoFormatterFoundHandler(context);
                 return;
             }
 
             await selectedFormatter.WriteAsync(formatterContext);
+        }
+
+        /// <summary>
+        /// Called if <see cref="ObjectResult.ExecuteResultAsync(ActionContext)"/> 
+        /// could not select a formatter for writing a response.
+        /// </summary>
+        /// <param name="context">The <see cref="ActionContext"/> associated with the call.</param>
+        /// <returns>A task which can respond appropriately when a formatter cannot be selected.</returns>
+        public virtual Task NoFormatterFoundHandler(ActionContext context)
+        {
+            context.HttpContext.Response.StatusCode = 406;
+            return Task.FromResult<bool>(false);
         }
 
         public virtual IOutputFormatter SelectFormatter(OutputFormatterContext formatterContext,
