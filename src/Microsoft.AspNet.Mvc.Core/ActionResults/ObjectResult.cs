@@ -44,23 +44,11 @@ namespace Microsoft.AspNet.Mvc
             if (selectedFormatter == null)
             {
                 // No formatter supports this.
-                await NoFormatterFoundHandler(context);
+                context.HttpContext.Response.StatusCode = 406;
                 return;
             }
 
             await selectedFormatter.WriteAsync(formatterContext);
-        }
-
-        /// <summary>
-        /// Called if <see cref="ObjectResult.ExecuteResultAsync(ActionContext)"/> 
-        /// could not select a formatter for writing a response.
-        /// </summary>
-        /// <param name="context">The <see cref="ActionContext"/> associated with the call.</param>
-        /// <returns>A task which can respond appropriately when a formatter cannot be selected.</returns>
-        public virtual Task NoFormatterFoundHandler(ActionContext context)
-        {
-            context.HttpContext.Response.StatusCode = 406;
-            return Task.FromResult<bool>(false);
         }
 
         public virtual IOutputFormatter SelectFormatter(OutputFormatterContext formatterContext,

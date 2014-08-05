@@ -13,12 +13,12 @@ namespace Microsoft.AspNet.Mvc
                                                                 new List<MediaTypeHeaderValue>()
                                                                 {
                                                                     MediaTypeHeaderValue.Parse("application/json"),
-                                                                    MediaTypeHeaderValue.Parse("text/json")
+                                                                    MediaTypeHeaderValue.Parse("text/json"),
                                                                 };
-        private IOutputFormatter _defaultJsonFormatter;
+        private IOutputFormatter _defaultFormatter;
 
-        public JsonResult([NotNull] object data) :
-            this(data, new JsonOutputFormatter(JsonOutputFormatter.CreateDefaultSettings(), indent: false))
+        public JsonResult(object data) :
+            this(data, null)
         {
         }
 
@@ -32,30 +32,41 @@ namespace Microsoft.AspNet.Mvc
         /// The default formatter must be able to handle either application/json
         /// or text/json.
         /// </remarks>
-        public JsonResult([NotNull] object data, IOutputFormatter defaultFormatter)
+        public JsonResult(object data, IOutputFormatter defaultFormatter)
                 : base(data)
         {
-            _defaultJsonFormatter = defaultFormatter;
+            _defaultFormatter = defaultFormatter;
+        }
+
+        public IOutputFormatter DefaultFormatter
+        {
+            get
+            {
+                if(_defaultFormatter == null)
+                {
+                    _defaultFormatter = new JsonOutputFormatter(JsonOutputFormatter.CreateDefaultSettings(),
+                                                                    indent: false);
+                }
+
+                return _defaultFormatter;
+            }
         }
 
         public override async Task ExecuteResultAsync([NotNull] ActionContext context)
         {
             // Set the content type explicitly to application/json and text/json.
-            // Even if there is a filter which sets it to some other value, force it.
-            ContentTypes = _defaultSupportedContentTypes;
+            if (ContentTypes == null || ContentTypes.Count == 0)
+            {
+                ContentTypes = _defaultSupportedContentTypes;
+            }
+
             await base.ExecuteResultAsync(context);
         }
 
-        public override async Task NoFormatterFoundHandler(ActionContext context)
+        public override IOutputFormatter SelectFormatter(OutputFormatterContext formatterContext,
+                                                         IEnumerable<IOutputFormatter> formatters)
         {
-            var outputFormatterContext = new OutputFormatterContext()
-            {
-                DeclaredType = DeclaredType,
-                ActionContext = context,
-                Object = Value,
-            };
-
-            await _defaultJsonFormatter.WriteAsync(outputFormatterContext);
+            return base.SelectFormatter(formatterContext, formatters) ?? DefaultFormatter;
         }
     }
 }
