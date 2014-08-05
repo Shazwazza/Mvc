@@ -24,6 +24,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="Project.json" />
+    <Content Include="Views\Directives\Scoped\ViewInheritsModelFromViewStarts.cshtml" />
+    <Content Include="Views\Directives\Scoped\_ViewStart.cshtml" />
+    <Content Include="Views\Directives\ViewInheritsInjectAndUsingsFromViewStarts.cshtml" />
+    <Content Include="Views\Directives\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Components\ComponentThatSetsTitle\Default.cshtml" />
     <Content Include="Views\Shared\_LayoutWithTitle.cshtml" />
     <Content Include="Views\Shared\_Partial.cshtml" />
@@ -36,12 +40,15 @@
     <Content Include="Views\ViewEngine\ViewWithoutLayout.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\ViewEngine\_NestedLayout.cshtml" />
+    <Content Include="Views\_ViewStart.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\ComponentThatSetsTitle.cs" />
+    <Compile Include="Controllers\DirectivesController.cs" />
     <Compile Include="Controllers\ViewEngineController.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Models\Address.cs" />
+    <Compile Include="Services\InjectedHelper.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\AspNet\Microsoft.Web.AspNet.targets" Condition="'$(VSToolsPath)' != ''" />

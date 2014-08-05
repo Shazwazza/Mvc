@@ -21,6 +21,12 @@
     <Content Include="Resources.resx" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Directives\ChunkMergerBase.cs" />
+    <Compile Include="Directives\ChunkMergerBaseOfT.cs" />
+    <Compile Include="Directives\ChunkInheritanceUtility.cs" />
+    <Compile Include="Directives\InjectChunkMerger.cs" />
+    <Compile Include="Directives\SetBaseTypeChunkMerger.cs" />
+    <Compile Include="Directives\UsingChunkMerger.cs" />
     <Compile Include="IMvcRazorHost.cs" />
     <Compile Include="InjectChunk.cs" />
     <Compile Include="InjectChunkVisitor.cs" />
@@ -36,6 +42,7 @@
     <Compile Include="MvcRazorHost.cs" />
     <Compile Include="MvcRazorHostOptions.cs" />
     <Compile Include="Properties\Resources.Designer.cs" />
+    <Compile Include="ViewStartUtility.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\AspNet\Microsoft.Web.AspNet.targets" Condition="'$(VSToolsPath)' != ''" />
 </Project>
