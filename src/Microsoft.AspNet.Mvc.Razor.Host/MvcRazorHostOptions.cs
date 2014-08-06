@@ -18,8 +18,13 @@ namespace Microsoft.AspNet.Mvc.Razor
             {
                 new InjectDescriptor("Microsoft.AspNet.Mvc.Rendering.IHtmlHelper<TModel>", "Html"),
                 new InjectDescriptor("Microsoft.AspNet.Mvc.IViewComponentHelper", "Component"),
+                // TODO: Replace once #774 is done
+                new InjectDescriptor("Microsoft.AspNet.Mvc.Razor.TagHelperRenderingHelper", "__tagHelperRenderer"),
             };
+            RazorBaseType = "Microsoft.AspNet.Mvc.Razor.RazorPage";
         }
+
+        public string RazorBaseType { get; set; }
 
         /// <summary>
         /// Gets or sets the model that is used by default for generated views

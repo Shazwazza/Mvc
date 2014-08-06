@@ -62,8 +62,7 @@ namespace Microsoft.AspNet.Mvc.Razor
             {
                 // The writer for the body is passed through the ViewContext, allowing things like HtmlHelpers
                 // and ViewComponents to reference it.
-                var oldWriter = context.Writer;
-                context.Writer = bufferedWriter;
+                context.UseWriter(bufferedWriter);
                 try
                 {
                     if (executeViewStart)
@@ -77,7 +76,7 @@ namespace Microsoft.AspNet.Mvc.Razor
                 }
                 finally
                 {
-                    context.Writer = oldWriter;
+                    context.NextWriter();
                 }
             }
         }

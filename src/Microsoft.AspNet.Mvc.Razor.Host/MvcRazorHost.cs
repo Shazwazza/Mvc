@@ -9,6 +9,8 @@ using Microsoft.AspNet.Razor;
 using Microsoft.AspNet.Razor.Generator;
 using Microsoft.AspNet.Razor.Generator.Compiler;
 using Microsoft.AspNet.Razor.Parser;
+using Microsoft.AspNet.Razor.TagHelpers;
+using Microsoft.Framework.OptionsModel;
 
 namespace Microsoft.AspNet.Mvc.Razor
 {
@@ -32,30 +34,20 @@ namespace Microsoft.AspNet.Mvc.Razor
         // This field holds the type name without the generic decoration (MyBaseType)
         private readonly string _baseType;
 
-        public MvcRazorHost(Type baseType)
-            : this(baseType.FullName)
-        {
-        }
-
-        public MvcRazorHost(string baseType)
+        public MvcRazorHost(ITagHelperDescriptorResolver tagHelperDescriptorResolver,
+                            IOptionsAccessor<MvcRazorHostOptions> options)
             : base(new CSharpRazorCodeLanguage())
         {
             // TODO: this needs to flow from the application rather than being initialized here.
             // Tracked by #774
-            _hostOptions = new MvcRazorHostOptions();
+            _hostOptions = options.Options;
+            var baseType = _hostOptions.RazorBaseType;
+
             _baseType = baseType;
             DefaultBaseClass = baseType + '<' + _hostOptions.DefaultModel + '>';
-            GeneratedClassContext = new GeneratedClassContext(
-                executeMethodName: "ExecuteAsync",
-                writeMethodName: "Write",
-                writeLiteralMethodName: "WriteLiteral",
-                writeToMethodName: "WriteTo",
-                writeLiteralToMethodName: "WriteLiteralTo",
-                templateTypeName: "HelperResult",
-                defineSectionMethodName: "DefineSection")
-            {
-                ResolveUrlMethodName = "Href"
-            };
+            GeneratedClassContext = new MvcGeneratedClassContext();
+
+            TagHelperDescriptorResolver = tagHelperDescriptorResolver;
 
             foreach (var ns in _defaultNamespaces)
             {

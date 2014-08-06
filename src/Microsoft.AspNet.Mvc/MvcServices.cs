@@ -8,7 +8,9 @@ using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.OptionDescriptors;
 using Microsoft.AspNet.Mvc.Razor;
 using Microsoft.AspNet.Mvc.Razor.Compilation;
+using Microsoft.AspNet.Mvc.Razor.TagHelpers;
 using Microsoft.AspNet.Mvc.Rendering;
+using Microsoft.AspNet.Razor.TagHelpers;
 using Microsoft.AspNet.Security;
 using Microsoft.Framework.ConfigurationModel;
 using Microsoft.Framework.DependencyInjection;
@@ -28,6 +30,8 @@ namespace Microsoft.AspNet.Mvc
         {
             var describe = new ServiceDescriber(configuration);
 
+            yield return describe.Transient<TagHelperRenderingHelper, TagHelperRenderingHelper>();
+
             yield return describe.Transient<IOptionsSetup<MvcOptions>, MvcOptionsSetup>();
 
             yield return describe.Transient<IControllerFactory, DefaultControllerFactory>();
@@ -37,11 +41,12 @@ namespace Microsoft.AspNet.Mvc
             yield return describe.Transient<IControllerAssemblyProvider, DefaultControllerAssemblyProvider>();
             yield return describe.Transient<IActionDiscoveryConventions, DefaultActionDiscoveryConventions>();
 
-            yield return describe.Instance<IMvcRazorHost>(new MvcRazorHost(typeof(RazorPage).FullName));
+            yield return describe.Transient<ITagHelperDescriptorResolver, DefaultTagHelperDescriptorResolver>();
+            yield return describe.Scoped<IMvcRazorHostProvider, DefaultMvcRazorHostProvider>();
 
             yield return describe.Transient<ICompilationService, RoslynCompilationService>();
 
-            yield return describe.Singleton<IViewEngineProvider, DefaultViewEngineProvider>();
+            yield return describe.Scoped<IViewEngineProvider, DefaultViewEngineProvider>();
             yield return describe.Scoped<ICompositeViewEngine, CompositeViewEngine>();
             yield return describe.Singleton<IRazorCompilationService, RazorCompilationService>();
             yield return describe.Singleton<IViewStartProvider, ViewStartProvider>();
@@ -83,7 +88,7 @@ namespace Microsoft.AspNet.Mvc
             yield return describe.Transient<IViewComponentInvokerFactory, DefaultViewComponentInvokerFactory>();
             yield return describe.Transient<INestedProvider<ViewComponentInvokerProviderContext>,
                 DefaultViewComponentInvokerProvider>();
-            yield return describe.Transient<IViewComponentHelper, DefaultViewComponentHelper>();
+            yield return describe.Scoped<IViewComponentHelper, DefaultViewComponentHelper>();
 
             yield return describe.Transient<IAuthorizationService, DefaultAuthorizationService>();
             yield return describe.Singleton<IClaimUidExtractor, DefaultClaimUidExtractor>();

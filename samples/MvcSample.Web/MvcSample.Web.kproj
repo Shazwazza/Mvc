@@ -27,6 +27,8 @@
     <Content Include="Areas\Travel\Views\Flight\Fly.cshtml" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="project.json" />
+    <Content Include="Scripts\foo.min.js" />
+    <Content Include="Scripts\foo.js" />
     <Content Include="Views\Home\Create.cshtml" />
     <Content Include="Views\Home\EditorTemplates\IEnumerable`1.cshtml" />
     <Content Include="Views\Home\InjectSample.cshtml" />
@@ -40,6 +42,7 @@
     <Content Include="Views\Shared\MyView.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
     <Content Include="web.config" />
     <Content Include="web.Debug.config" />
     <Content Include="web.Release.config" />
@@ -69,6 +72,17 @@
     <Compile Include="SimplePocoController.cs" />
     <Compile Include="SimpleRest.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="TagHelpers\ButtonTagHelper.cs" />
+    <Compile Include="TagHelpers\CatchAllTagHelper.cs" />
+    <Compile Include="TagHelpers\DivTagHelper.cs" />
+    <Compile Include="TagHelpers\FooTagHelper.cs" />
+    <Compile Include="TagHelpers\FormTagHelper.cs" />
+    <Compile Include="TagHelpers\InputTagHelper.cs" />
+    <Compile Include="TagHelpers\LabelTagHelper.cs" />
+    <Compile Include="TagHelpers\PrimitiveTagHelper.cs" />
+    <Compile Include="TagHelpers\ScriptTagHelper.cs" />
+    <Compile Include="TagHelpers\TagCloudTagHelper.cs" />
+    <Compile Include="TestController.cs" />
     <Compile Include="ViewMetadata.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\AspNet\Microsoft.Web.AspNet.targets" Condition="'$(VSToolsPath)' != ''" />

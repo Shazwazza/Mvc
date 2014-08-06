@@ -35,6 +35,16 @@
     <Compile Include="RazorTextWriter.cs" />
     <Compile Include="IViewStartProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Razor\TagHelpers\ContentBehaviorAttribute.cs" />
+    <Compile Include="Razor\TagHelpers\Expressions\MvcTagHelperExpression.cs" />
+    <Compile Include="Razor\TagHelpers\Expressions\TagHelperLiteralExpression.cs" />
+    <Compile Include="Razor\TagHelpers\Expressions\TagHelperModelExpressionCodeGenerator.cs" />
+    <Compile Include="Razor\TagHelpers\Expressions\TagHelperModelExpressionHelper.cs" />
+    <Compile Include="Razor\TagHelpers\Expressions\TagHelperModelExpression.cs" />
+    <Compile Include="Razor\TagHelpers\Expressions\TagHelperPrimitiveExpressionCodeGenerator.cs" />
+    <Compile Include="Razor\TagHelpers\TagBuilderStringWriter.cs" />
+    <Compile Include="Razor\TagHelpers\TagHelperContentBehaviorValidator.cs" />
+    <Compile Include="Razor\TagHelpers\TagHelperRenderingContext.cs" />
     <Compile Include="ViewStartProvider.cs" />
     <Compile Include="VirtualPathRazorPageFactory.cs" />
     <Compile Include="HelperResult.cs" />
@@ -47,8 +57,17 @@
     <Compile Include="RazorView.cs" />
     <Compile Include="RazorPageActivator.cs" />
     <Compile Include="RazorViewEngine.cs" />
+    <Compile Include="Razor\DefaultMvcRazorHostProvider.cs" />
+    <Compile Include="Razor\IMvcRazorHostProvider.cs" />
     <Compile Include="Razor\IRazorCompilationService.cs" />
     <Compile Include="Razor\RazorCompilationService.cs" />
+    <Compile Include="Razor\TagHelpers\AttributeNameAttribute.cs" />
+    <Compile Include="Razor\TagHelpers\DefaultTagHelperDescriptorResolver.cs" />
+    <Compile Include="Razor\TagHelpers\MvcTagHelper.cs" />
+    <Compile Include="Razor\TagHelpers\MvcTagHelperContext.cs" />
+    <Compile Include="Razor\TagHelpers\TagHelperConventions.cs" />
+    <Compile Include="Razor\TagHelpers\TagHelperRenderingHelper.cs" />
+    <Compile Include="Razor\TagHelpers\TagNameAttribute.cs" />
     <Compile Include="Services\IRoslynMetadataReference.cs" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\AspNet\Microsoft.Web.AspNet.targets" Condition="'$(VSToolsPath)' != ''" />
