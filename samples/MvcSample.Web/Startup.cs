@@ -79,6 +79,9 @@ namespace MvcSample.Web
                     "controllerRoute",
                     "{controller}",
                     new { controller = "Home" });
+
+                routes.MapRoute("CountryRoutes",
+                    "/Countries/{CountryCode}/{Controller}/{Action}");
             });
         }
     }

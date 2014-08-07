@@ -196,9 +196,18 @@ namespace Microsoft.AspNet.Mvc
                         // Skip duplicates
                         if (!HasConstraint(actionDescriptor.RouteConstraints, constraintAttribute.RouteKey))
                         {
-                            actionDescriptor.RouteConstraints.Add(new RouteDataActionConstraint(
-                                constraintAttribute.RouteKey,
-                                constraintAttribute.RouteValue));
+                            if (constraintAttribute.CatchAll)
+                            {
+                                actionDescriptor.RouteConstraints.Add(new RouteDataActionConstraint(
+                                    constraintAttribute.RouteKey,
+                                    RouteKeyHandling.CatchAll));
+                            }
+                            else
+                            {
+                                actionDescriptor.RouteConstraints.Add(new RouteDataActionConstraint(
+                                    constraintAttribute.RouteKey,
+                                    constraintAttribute.RouteValue));
+                            }
                         }
                     }
 

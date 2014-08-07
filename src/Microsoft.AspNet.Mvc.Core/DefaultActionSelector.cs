@@ -123,7 +123,7 @@ namespace Microsoft.AspNet.Mvc
 
         protected virtual async Task<ActionDescriptor> SelectBestCandidate(
             RouteContext context,
-            List<ActionDescriptor> candidates)
+            IList<ActionDescriptor> candidates)
         {
             var applicableCandiates = new List<ActionDescriptorCandidate>();
             foreach (var action in candidates)
@@ -170,6 +170,23 @@ namespace Microsoft.AspNet.Mvc
             {
                 return null;
             }
+
+            HashSet<string> routeKeysWithoutCatchAll = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var candidate in applicableCandiates)
+            {
+                foreach (var constraint in candidate.Action.RouteConstraints)
+                {
+                    if (constraint.KeyHandling == RouteKeyHandling.RequireKey)
+                    {
+                        routeKeysWithoutCatchAll.Add(constraint.RouteValue);
+                    }
+                }
+            }
+
+            applicableCandiates = applicableCandiates.Where(candidate => !candidate.Action.RouteConstraints
+                .Any(c => c.KeyHandling == RouteKeyHandling.CatchAll && !routeKeysWithoutCatchAll.Contains(c.RouteKey)))
+                .ToList();
 
             var mostParametersSatisfied =
                 applicableCandiates

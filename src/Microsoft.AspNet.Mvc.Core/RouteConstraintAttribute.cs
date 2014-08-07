@@ -18,8 +18,16 @@ namespace Microsoft.AspNet.Mvc
             BlockNonAttributedActions = blockNonAttributedActions;
         }
 
+        protected RouteConstraintAttribute(
+            [NotNull]string routeKey)
+        {
+            RouteKey = routeKey;
+        }
+
         public string RouteKey { get; private set; }
         public string RouteValue { get; private set; }
         public bool BlockNonAttributedActions { get; private set; }
+
+        public bool CatchAll { get; set; }
     }
 }
