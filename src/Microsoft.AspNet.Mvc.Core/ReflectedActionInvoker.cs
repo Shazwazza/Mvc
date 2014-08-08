@@ -283,18 +283,17 @@ namespace Microsoft.AspNet.Mvc
                         modelAccessor: null,
                         modelType: parameterType);
                     var providerContext = new InputFormatterProviderContext(
-                        actionBindingContext.ActionContext.HttpContext,
+                        actionBindingContext.ActionContext,
                         modelMetadata,
                         modelState);
 
                     var inputFormatter = actionBindingContext.InputFormatterProvider.GetInputFormatter(
                         providerContext);
 
-                    var formatterContext = new InputFormatterContext(actionBindingContext.ActionContext.HttpContext,
-                                                                     modelMetadata,
+                    var formatterContext = new InputFormatterContext(actionBindingContext.ActionContext,
+                                                                     modelMetadata.ModelType,
                                                                      modelState);
-                    await inputFormatter.ReadAsync(formatterContext);
-                    parameterValues[parameter.Name] = formatterContext.Model;
+                    parameterValues[parameter.Name] = await inputFormatter.ReadAsync(formatterContext);
                 }
                 else
                 {

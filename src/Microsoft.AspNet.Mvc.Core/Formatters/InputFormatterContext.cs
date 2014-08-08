@@ -4,26 +4,25 @@
 using System;
 using System.Text;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Mvc.ModelBinding;
 
-namespace Microsoft.AspNet.Mvc.ModelBinding
+namespace Microsoft.AspNet.Mvc
 {
     public class InputFormatterContext
     {
-        public InputFormatterContext([NotNull] HttpContext httpContext,
-                                     [NotNull] ModelMetadata metadata, 
+        public InputFormatterContext([NotNull] ActionContext actionContext,
+                                     [NotNull] Type modelType, 
                                      [NotNull] ModelStateDictionary modelState)
         {
-            HttpContext = httpContext;
-            Metadata = metadata;
+            ActionContext = actionContext;
+            ModelType = modelType;
             ModelState = modelState;
         }
 
-        public HttpContext HttpContext { get; private set; }
+        public ActionContext ActionContext { get; private set; }
 
-        public ModelMetadata Metadata { get; private set; }
+        public Type ModelType { get; private set; }
 
         public ModelStateDictionary ModelState { get; private set; }
-
-        public object Model { get; set; }
     }
 }

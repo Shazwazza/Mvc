@@ -23,20 +23,21 @@ namespace Microsoft.AspNet.Mvc
 
         public IInputFormatter GetInputFormatter(InputFormatterProviderContext context)
         {
-            var request = context.HttpContext.Request;
+            var request = context.ActionContext.HttpContext.Request;
             var formatters = _defaultFormatters;
-            var contentType = MediaTypeHeaderValue.Parse(request.ContentType);
-            if (contentType == null)
+            var requestContentType = MediaTypeHeaderValue.Parse(request.ContentType);
+            if (requestContentType == null)
             {
                 // TODO: http exception?
                 throw new InvalidOperationException("400: Bad Request");
             }
 
+            var formatterContext = new InputFormatterContext(context.ActionContext,
+                                                             context.Metadata.ModelType,
+                                                             context.ModelState);
             foreach (var formatter in formatters)
             {
-                var formatterMatched = formatter.SupportedMediaTypes
-                                                .Any(supportedMediaType =>
-                                                        supportedMediaType.IsSubsetOf(contentType));
+                var formatterMatched = formatter.CanReadType(formatterContext, requestContentType);
                 if (formatterMatched)
                 {
                     return formatter;
@@ -46,7 +47,7 @@ namespace Microsoft.AspNet.Mvc
             // TODO: Http exception
             throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
                                                               "415: Unsupported content type {0}",
-                                                              contentType.RawValue));
+                                                              requestContentType.RawValue));
         }
     }
 }

@@ -10,7 +10,8 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
 {
     public class FormValueProviderFactory : IValueProviderFactory
     {
-        private static MediaTypeHeaderValue _formEncodedContentType = MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
+        private static MediaTypeHeaderValue _formEncodedContentType = 
+                                            MediaTypeHeaderValue.Parse("application/x-www-form-urlencoded");
 
         public IValueProvider GetValueProvider([NotNull] ValueProviderFactoryContext context)
         {

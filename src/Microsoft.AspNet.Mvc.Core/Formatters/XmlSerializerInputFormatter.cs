@@ -9,7 +9,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
 
-namespace Microsoft.AspNet.Mvc.ModelBinding
+namespace Microsoft.AspNet.Mvc
 {
     /// <summary>
     /// This class handles deserialization of input XML data
@@ -53,16 +53,15 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         /// </summary>
         /// <param name="context">The input formatter context which contains the body to be read.</param>
         /// <returns>Task which reads the input.</returns>
-        public override async Task ReadAsync(InputFormatterContext context)
+        public override async Task<object> ReadAsync(InputFormatterContext context)
         {
-            var request = context.HttpContext.Request;
+            var request = context.ActionContext.HttpContext.Request;
             if (request.ContentLength == 0)
             {
-                context.Model = GetDefaultValueForType(context.Metadata.ModelType);
-                return;
+                return GetDefaultValueForType(context.ModelType);
             }
 
-            context.Model = await ReadInternal(context);
+            return await ReadInternal(context);
         }
 
         /// <summary>
@@ -97,8 +96,8 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
 
         private Task<object> ReadInternal(InputFormatterContext context)
         {
-            var type = context.Metadata.ModelType;
-            var request = context.HttpContext.Request;
+            var type = context.ModelType;
+            var request = context.ActionContext.HttpContext.Request;
 
             using (var xmlReader = CreateXmlReader(new DelegatingStream(request.Body)))
             {

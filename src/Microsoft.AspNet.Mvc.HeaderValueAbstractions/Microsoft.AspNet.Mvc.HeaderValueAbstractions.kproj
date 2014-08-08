@@ -17,7 +17,7 @@
     <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FormattingUtilities.cs" />
+    <Compile Include="HttpHeaderUtilitites.cs" />
     <Compile Include="MediaTypeHeaderValue.cs" />
     <Compile Include="MediaTypeHeaderValueRange.cs" />
     <Compile Include="MediaTypeWithQualityHeaderValue.cs" />
