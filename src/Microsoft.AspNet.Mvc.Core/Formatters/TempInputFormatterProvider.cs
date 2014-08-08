@@ -6,28 +6,25 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
+using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.Framework.DependencyInjection;
+using Microsoft.Framework.OptionsModel;
 
-namespace Microsoft.AspNet.Mvc.ModelBinding
+namespace Microsoft.AspNet.Mvc
 {
     public class TempInputFormatterProvider : IInputFormatterProvider
     {
-        private IInputFormatter[] _formatters;
+        private IList<IInputFormatter> _defaultFormatters;
+
+        public TempInputFormatterProvider([NotNull] IOptionsAccessor<MvcOptions> optionsAccessor)
+        {
+            _defaultFormatters = optionsAccessor.Options.InputFormatters;
+        }
 
         public IInputFormatter GetInputFormatter(InputFormatterProviderContext context)
         {
             var request = context.HttpContext.Request;
-
-            var formatters = _formatters;
-
-            if (formatters == null)
-            {
-                formatters = context.HttpContext.RequestServices.GetService<IEnumerable<IInputFormatter>>()
-                                    .ToArray();
-
-                _formatters = formatters;
-            }
-
+            var formatters = _defaultFormatters;
             var contentType = MediaTypeHeaderValue.Parse(request.ContentType);
             if (contentType == null)
             {
@@ -37,13 +34,18 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
 
             foreach (var formatter in formatters)
             {
-                formatter.SupportedMediaTypes
-                                  .FirstOrDefault(supportedMediaType => supportedMediaType.IsSubsetOf(contentType));
+                var formatterMatched = formatter.SupportedMediaTypes
+                                                .Any(supportedMediaType =>
+                                                        supportedMediaType.IsSubsetOf(contentType));
+                if (formatterMatched)
+                {
+                    return formatter;
+                }
             }
 
             // TODO: Http exception
-            throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture, 
-                                                              "415: Unsupported content type {0}", 
+            throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
+                                                              "415: Unsupported content type {0}",
                                                               contentType.RawValue));
         }
     }
