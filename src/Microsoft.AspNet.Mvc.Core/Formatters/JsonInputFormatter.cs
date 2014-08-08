@@ -2,16 +2,15 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNet.Mvc.Core;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
 using Newtonsoft.Json;
 
-namespace Microsoft.AspNet.Mvc.ModelBinding
+namespace Microsoft.AspNet.Mvc
 {
     public class JsonInputFormatter : IInputFormatter
     {
@@ -71,15 +70,15 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         public bool CaptureDeserilizationErrors { get; set; }
 
         /// <inheritdoc />
-        public async Task ReadAsync([NotNull] InputFormatterContext context)
+        public async Task<object> ReadAsync([NotNull] InputFormatterContext context)
         {
-            var request = context.HttpContext.Request;
+            var request = context.ActionContext.HttpContext.Request;
             if (request.ContentLength == 0)
             {
-                var modelType = context.Metadata.ModelType;
-                context.Model = modelType.GetTypeInfo().IsValueType ? Activator.CreateInstance(modelType) :
+                var modelType = context.ModelType;
+                var model = modelType.GetTypeInfo().IsValueType ? Activator.CreateInstance(modelType) :
                                                                       null;
-                return;
+                return model;
             }
 
             MediaTypeHeaderValue requestContentType = null;
@@ -89,7 +88,7 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             // Never non-null since SelectCharacterEncoding() throws in error / not found scenarios
             var effectiveEncoding = SelectCharacterEncoding(requestContentType);
 
-            context.Model = await ReadInternal(context, effectiveEncoding);
+            return await ReadInternal(context, effectiveEncoding);
         }
 
         /// <summary>
@@ -118,8 +117,8 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         private Task<object> ReadInternal(InputFormatterContext context,
                                           Encoding effectiveEncoding)
         {
-            var type = context.Metadata.ModelType;
-            var request = context.HttpContext.Request;
+            var type = context.ModelType;
+            var request = context.ActionContext.HttpContext.Request;
 
             using (var jsonReader = CreateJsonReader(context, request.Body, effectiveEncoding))
             {
@@ -181,7 +180,7 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             }
 
             // No supported encoding was found so there is no way for us to start reading.
-            throw new InvalidOperationException(Resources.FormatMediaTypeFormatterNoEncoding(GetType().FullName));
+            throw new InvalidOperationException(Resources.FormatInputFormatterNoEncoding(GetType().FullName));
         }
     }
 }

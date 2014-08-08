@@ -8,11 +8,12 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Mvc.ModelBinding;
 using Moq;
 using Newtonsoft.Json;
 using Xunit;
 
-namespace Microsoft.AspNet.Mvc.ModelBinding
+namespace Microsoft.AspNet.Mvc
 {
     public class JsonInputFormatterTest
     {
@@ -48,16 +49,16 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             var formatter = new JsonInputFormatter();
             var contentBytes = Encoding.UTF8.GetBytes(content);
 
-            var httpContext = GetHttpContext(contentBytes);
+            var actionContext = GetActionContext(contentBytes);
             var modelState = new ModelStateDictionary();
             var metadata = new EmptyModelMetadataProvider().GetMetadataForType(null, type);
-            var context = new InputFormatterContext(httpContext, metadata, modelState);
+            var context = new InputFormatterContext(actionContext, metadata.ModelType, modelState);
 
             // Act
-            await formatter.ReadAsync(context);
+            var model = await formatter.ReadAsync(context);
 
             // Assert
-            Assert.Equal(expected, context.Model);
+            Assert.Equal(expected, model);
         }
 
         [Fact]
@@ -68,18 +69,18 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             var formatter = new JsonInputFormatter();
             var contentBytes = Encoding.UTF8.GetBytes(content);
 
-            var httpContext = GetHttpContext(contentBytes);
+            var actionContext = GetActionContext(contentBytes);
             var modelState = new ModelStateDictionary();
             var metadata = new EmptyModelMetadataProvider().GetMetadataForType(null, typeof(User));
-            var context = new InputFormatterContext(httpContext, metadata, modelState);
+            var context = new InputFormatterContext(actionContext, metadata.ModelType, modelState);
 
             // Act
-            await formatter.ReadAsync(context);
+            var model = await formatter.ReadAsync(context);
 
             // Assert
-            var model = Assert.IsType<User>(context.Model);
-            Assert.Equal("Person Name", model.Name);
-            Assert.Equal(30, model.Age);
+            var userModel = Assert.IsType<User>(model);
+            Assert.Equal("Person Name", userModel.Name);
+            Assert.Equal(30, userModel.Age);
         }
 
         [Fact]
@@ -90,10 +91,10 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             var formatter = new JsonInputFormatter();
             var contentBytes = Encoding.UTF8.GetBytes(content);
 
-            var httpContext = GetHttpContext(contentBytes);
+            var httpContext = GetActionContext(contentBytes);
             var modelState = new ModelStateDictionary();
             var metadata = new EmptyModelMetadataProvider().GetMetadataForType(null, typeof(User));
-            var context = new InputFormatterContext(httpContext, metadata, modelState);
+            var context = new InputFormatterContext(httpContext, metadata.ModelType, modelState);
 
             // Act and Assert
             await Assert.ThrowsAsync<JsonReaderException>(() => formatter.ReadAsync(context));
@@ -107,17 +108,25 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
             var formatter = new JsonInputFormatter { CaptureDeserilizationErrors = true };
             var contentBytes = Encoding.UTF8.GetBytes(content);
 
-            var httpContext = GetHttpContext(contentBytes);
+            var actionContext = GetActionContext(contentBytes);
             var modelState = new ModelStateDictionary();
             var metadata = new EmptyModelMetadataProvider().GetMetadataForType(null, typeof(User));
-            var context = new InputFormatterContext(httpContext, metadata, modelState);
+            var context = new InputFormatterContext(actionContext, metadata.ModelType, modelState);
 
             // Act
-            await formatter.ReadAsync(context);
+            var model = await formatter.ReadAsync(context);
 
             // Assert
             Assert.Equal("Could not convert string to decimal: not-an-age. Path 'Age', line 1, position 39.", 
                          modelState["Age"].Errors[0].Exception.Message);
+        }
+
+        private static ActionContext GetActionContext(byte[] contentBytes,
+                                                 string contentType = "application/xml")
+        {
+            return new ActionContext(GetHttpContext(contentBytes, contentType),
+                                     new AspNet.Routing.RouteData(),
+                                     new ActionDescriptor());
         }
 
         private static HttpContext GetHttpContext(byte[] contentBytes, 
