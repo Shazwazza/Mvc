@@ -24,7 +24,7 @@ namespace AntiForgeryWebSite
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
         {
-            // Send to register which gets another html antiforg token.
+            // Send to register which gets another html antiforgery token.
             return RedirectToAction("Index", "Home");
         }
     }

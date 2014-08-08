@@ -12,10 +12,5 @@ namespace AntiForgeryWebSite
         {
             return View("MyView");
         }
-
-        public IActionResult Book()
-        {
-            return null;
-        }
     }
 }

@@ -14,7 +14,7 @@ namespace Microsoft.AspNet.Mvc.FunctionalTests
         private readonly IServiceProvider _services;
         private readonly Action<IBuilder> _app = new AntiForgeryWebSite.Startup().Configure;
 
-        public AntiForgeryFunctionaltests()
+        public AntiForgeryTests()
         {
             _services = TestHelper.CreateServices("AntiForgeryWebSite");
         }
