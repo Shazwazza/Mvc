@@ -76,5 +76,22 @@ namespace Microsoft.AspNet.Mvc
             Assert.IsType<TextPlainFormatter>(mvcOptions.OutputFormatters[0].Instance);
             Assert.IsType<JsonOutputFormatter>(mvcOptions.OutputFormatters[1].Instance);
         }
+
+        [Fact]
+        public void Setup_SetsUpInputFormatters()
+        {
+            // Arrange
+            var mvcOptions = new MvcOptions();
+            var setup = new MvcOptionsSetup();
+
+            // Act
+            setup.Setup(mvcOptions);
+
+            // Assert
+            Assert.Equal(3, mvcOptions.InputFormatters.Count);
+            Assert.IsType<JsonInputFormatter>(mvcOptions.InputFormatters[0]);
+            Assert.IsType<XmlSerializerInputFormatter>(mvcOptions.InputFormatters[1]);
+            Assert.IsType<XmlDataContractSerializerInputFormatter>(mvcOptions.InputFormatters[2]);
+        }
     }
 }
