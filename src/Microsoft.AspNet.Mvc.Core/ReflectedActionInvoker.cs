@@ -19,6 +19,7 @@ namespace Microsoft.AspNet.Mvc
         private readonly ReflectedActionDescriptor _descriptor;
         private readonly IControllerFactory _controllerFactory;
         private readonly IActionBindingContextProvider _bindingProvider;
+        private readonly IInputFormatterCollectionProvider _inputFormatterCollectionProvider;
         private readonly INestedProviderManager<FilterProviderContext> _filterProvider;
 
         private IFilter[] _filters;
@@ -38,6 +39,7 @@ namespace Microsoft.AspNet.Mvc
                                       [NotNull] ReflectedActionDescriptor descriptor,
                                       [NotNull] IControllerFactory controllerFactory,
                                       [NotNull] IActionBindingContextProvider bindingContextProvider,
+                                      [NotNull] IInputFormatterCollectionProvider inputFormatterCollectionProvider,
                                       [NotNull] INestedProviderManager<FilterProviderContext> filterProvider)
         {
             _actionContext = actionContext;
@@ -45,7 +47,7 @@ namespace Microsoft.AspNet.Mvc
             _controllerFactory = controllerFactory;
             _bindingProvider = bindingContextProvider;
             _filterProvider = filterProvider;
-
+            _inputFormatterCollectionProvider = inputFormatterCollectionProvider;
             if (descriptor.MethodInfo == null)
             {
                 throw new ArgumentException(
@@ -58,7 +60,7 @@ namespace Microsoft.AspNet.Mvc
         public async Task InvokeActionAsync()
         {
             _actionContext.Controller = _controllerFactory.CreateController(_actionContext);
-
+            _actionContext.InputFormatters = _inputFormatterCollectionProvider.GetInputFormatters(_actionContext);
             _filters = GetFilters();
             _cursor = new FilterCursor(_filters);
 
@@ -279,20 +281,13 @@ namespace Microsoft.AspNet.Mvc
                 if (parameter.BodyParameterInfo != null)
                 {
                     var parameterType = parameter.BodyParameterInfo.ParameterType;
-                    var modelMetadata = metadataProvider.GetMetadataForType(
-                        modelAccessor: null,
-                        modelType: parameterType);
-                    var providerContext = new InputFormatterProviderContext(
-                        actionBindingContext.ActionContext,
-                        modelMetadata,
-                        modelState);
-
-                    var inputFormatter = actionBindingContext.InputFormatterProvider.GetInputFormatter(
-                        providerContext);
-
                     var formatterContext = new InputFormatterContext(actionBindingContext.ActionContext,
-                                                                     modelMetadata.ModelType,
+                                                                     parameterType,
                                                                      modelState);
+
+                    var providerContext = new InputFormatterProviderContext(formatterContext);
+                    var inputFormatter = actionBindingContext.InputFormatterProvider
+                                                             .GetInputFormatter(providerContext);
                     parameterValues[parameter.Name] = await inputFormatter.ReadAsync(formatterContext);
                 }
                 else

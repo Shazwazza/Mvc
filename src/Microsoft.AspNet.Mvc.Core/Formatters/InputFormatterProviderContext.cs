@@ -8,19 +8,11 @@ namespace Microsoft.AspNet.Mvc
 {
     public class InputFormatterProviderContext
     {
-        public InputFormatterProviderContext([NotNull] ActionContext actionContext,
-                                             [NotNull] ModelMetadata metadata, 
-                                             [NotNull] ModelStateDictionary modelState)
+        public InputFormatterProviderContext([NotNull] InputFormatterContext inputFormatterContext)
         {
-            ActionContext = actionContext;
-            Metadata = metadata;
-            ModelState = modelState;
+            InputFormatterContext = inputFormatterContext;
         }
 
-        public ActionContext ActionContext { get; private set; }
-
-        public ModelMetadata Metadata { get; private set; }
-
-        public ModelStateDictionary ModelState { get; private set; }
+        public InputFormatterContext InputFormatterContext { get; private set; }
     }
 }

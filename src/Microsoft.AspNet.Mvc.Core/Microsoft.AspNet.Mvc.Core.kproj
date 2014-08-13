@@ -33,6 +33,8 @@
     <Compile Include="Formatters\DelegatingStream.cs" />
     <Compile Include="Formatters\FormattingUtilities.cs" />
     <Compile Include="Formatters\IInputFormatter.cs" />
+    <Compile Include="Formatters\DefaultInputFormatterCollectionProvider.cs" />
+    <Compile Include="Formatters\IInputFormatterCollectionProvider.cs" />
     <Compile Include="Formatters\IInputFormatterProvider.cs" />
     <Compile Include="Formatters\InputFormatter.cs" />
     <Compile Include="Formatters\InputFormatterContext.cs" />
