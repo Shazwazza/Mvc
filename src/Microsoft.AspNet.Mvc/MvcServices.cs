@@ -71,8 +71,10 @@ namespace Microsoft.AspNet.Mvc
             yield return describe.Scoped<ICompositeValueProviderFactory, CompositeValueProviderFactory>();
             yield return describe.Transient<IOutputFormattersProvider, DefaultOutputFormattersProvider>();
 
-            // The default JsonOutputFormatter.
-            yield return describe.Singleton<JsonOutputFormatter, JsonOutputFormatter>();
+            // The default JsonOutputFormatter. We create an instance here instead of a singleton because DI
+            // is unable to create an instance with non injected paramters.
+            yield return describe.Instance<JsonOutputFormatter>(
+                new JsonOutputFormatter(JsonOutputFormatter.CreateDefaultSettings(), indent:false));
 
             yield return describe.Transient<INestedProvider<FilterProviderContext>, DefaultFilterProvider>();
 

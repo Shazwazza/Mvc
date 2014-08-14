@@ -18,10 +18,6 @@ namespace Microsoft.AspNet.Mvc
         private readonly JsonSerializerSettings _settings;
         private readonly bool _indent;
 
-        public JsonOutputFormatter() : this(CreateDefaultSettings(), indent: false)
-        {
-        }
-
         public JsonOutputFormatter([NotNull] JsonSerializerSettings settings, bool indent)
         {
             _settings = settings;
