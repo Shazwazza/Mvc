@@ -72,7 +72,7 @@ namespace Microsoft.AspNet.Mvc
             Assert.Equal(expected, memoryStream.ToArray());
         }
 
-        public async Task ExecuteResult_UsesDefaultFormatterIfNoneIsRegistered()
+        public async Task ExecuteResult_UsesDefaultFormatter_IfNoneIsRegistered_AndNoneIsPassed()
         {
             // Arrange
             var expected = _abcdUTF8Bytes;

@@ -4,6 +4,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Mvc.HeaderValueAbstractions;
+using Microsoft.Framework.DependencyInjection;
 
 namespace Microsoft.AspNet.Mvc
 {
@@ -38,20 +39,6 @@ namespace Microsoft.AspNet.Mvc
             _defaultFormatter = defaultFormatter;
         }
 
-        public IOutputFormatter DefaultFormatter
-        {
-            get
-            {
-                if(_defaultFormatter == null)
-                {
-                    _defaultFormatter = new JsonOutputFormatter(JsonOutputFormatter.CreateDefaultSettings(),
-                                                                    indent: false);
-                }
-
-                return _defaultFormatter;
-            }
-        }
-
         public override async Task ExecuteResultAsync([NotNull] ActionContext context)
         {
             // Set the content type explicitly to application/json and text/json.
@@ -66,7 +53,16 @@ namespace Microsoft.AspNet.Mvc
         public override IOutputFormatter SelectFormatter(OutputFormatterContext formatterContext,
                                                          IEnumerable<IOutputFormatter> formatters)
         {
-            return base.SelectFormatter(formatterContext, formatters) ?? DefaultFormatter;
+            var formatter = base.SelectFormatter(formatterContext, formatters);
+            if (formatter == null)
+            {
+                formatter = _defaultFormatter ?? formatterContext.ActionContext
+                                                                 .HttpContext
+                                                                 .RequestServices
+                                                                 .GetService<JsonOutputFormatter>();
+            }
+
+            return formatter;
         }
     }
 }
