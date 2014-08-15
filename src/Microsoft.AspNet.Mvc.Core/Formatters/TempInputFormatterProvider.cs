@@ -14,24 +14,24 @@ namespace Microsoft.AspNet.Mvc
 {
     public class TempInputFormatterProvider : IInputFormatterProvider
     {
-        private IList<IInputFormatter> _defaultFormatters;
+        private IInputFormattersProvider _defaultFormattersProvider;
 
-        public TempInputFormatterProvider([NotNull] IOptionsAccessor<MvcOptions> optionsAccessor)
+        public TempInputFormatterProvider([NotNull] IInputFormattersProvider formattersProvider)
         {
-            _defaultFormatters = optionsAccessor.Options.InputFormatters;
+            _defaultFormattersProvider = formattersProvider;
         }
 
         public IInputFormatter GetInputFormatter(InputFormatterProviderContext context)
         {
             var request = context.HttpContext.Request;
-            var formatters = _defaultFormatters;
-            var contentType = MediaTypeHeaderValue.Parse(request.ContentType);
-            if (contentType == null)
+            MediaTypeHeaderValue contentType = null;
+            if (!MediaTypeHeaderValue.TryParse(request.ContentType, out contentType))
             {
-                // TODO: http exception?
+                // TODO: https://github.com/aspnet/Mvc/issues/458
                 throw new InvalidOperationException("400: Bad Request");
             }
 
+            var formatters = _defaultFormattersProvider.InputFormatters;
             foreach (var formatter in formatters)
             {
                 var formatterMatched = formatter.SupportedMediaTypes
@@ -43,7 +43,7 @@ namespace Microsoft.AspNet.Mvc
                 }
             }
 
-            // TODO: Http exception
+            // TODO: https://github.com/aspnet/Mvc/issues/458
             throw new InvalidOperationException(string.Format(CultureInfo.CurrentCulture,
                                                               "415: Unsupported content type {0}",
                                                               contentType.RawValue));

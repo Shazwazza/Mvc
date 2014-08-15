@@ -13,15 +13,17 @@ using Newtonsoft.Json;
 
 namespace Microsoft.AspNet.Mvc.ModelBinding
 {
-    public class JsonInputFormatter : InputFormatter
+    public class JsonInputFormatter : IInputFormatter
     {
         private const int DefaultMaxDepth = 32;
         private JsonSerializerSettings _jsonSerializerSettings;
 
         public JsonInputFormatter()
         {
+            SupportedEncodings = new List<Encoding>();
             SupportedEncodings.Add(Encodings.UTF8EncodingWithoutBOM);
             SupportedEncodings.Add(Encodings.UTF16EncodingLittleEndian);
+            SupportedMediaTypes = new List<MediaTypeHeaderValue>();
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/json"));
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/json"));
 
@@ -38,6 +40,12 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
                 TypeNameHandling = TypeNameHandling.None
             };
         }
+
+        /// <inheritdoc />
+        public IList<MediaTypeHeaderValue> SupportedMediaTypes { get; private set; }
+
+        /// <inheritdoc />
+        public IList<Encoding> SupportedEncodings { get; private set; }
 
         /// <summary>
         /// Gets or sets the <see cref="JsonSerializerSettings"/> used to configure the <see cref="JsonSerializer"/>.
@@ -63,7 +71,7 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         public bool CaptureDeserilizationErrors { get; set; }
 
         /// <inheritdoc />
-        public override async Task ReadAsync([NotNull] InputFormatterContext context)
+        public async Task ReadAsync([NotNull] InputFormatterContext context)
         {
             var request = context.HttpContext.Request;
             if (request.ContentLength == 0)
@@ -74,7 +82,8 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
                 return;
             }
 
-            var requestContentType = MediaTypeHeaderValue.Parse(request.ContentType);
+            MediaTypeHeaderValue requestContentType = null;
+            MediaTypeHeaderValue.TryParse(request.ContentType, out requestContentType);
 
             // Get the character encoding for the content
             // Never non-null since SelectCharacterEncoding() throws in error / not found scenarios

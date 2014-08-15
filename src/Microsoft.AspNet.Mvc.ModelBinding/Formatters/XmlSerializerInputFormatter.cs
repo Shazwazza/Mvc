@@ -2,8 +2,10 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
@@ -15,7 +17,7 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
     /// This class handles deserialization of input XML data
     /// to strongly-typed objects using <see cref="XmlSerializer"/>
     /// </summary>
-    public class XmlSerializerInputFormatter : InputFormatter
+    public class XmlSerializerInputFormatter : IInputFormatter
     {
         private readonly XmlDictionaryReaderQuotas _readerQuotas = FormattingUtilities.GetDefaultXmlReaderQuotas();
 
@@ -24,11 +26,19 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         /// </summary>
         public XmlSerializerInputFormatter()
         {
+            SupportedEncodings = new List<Encoding>();
             SupportedEncodings.Add(Encodings.UTF8EncodingWithoutBOM);
             SupportedEncodings.Add(Encodings.UTF16EncodingLittleEndian);
+            SupportedMediaTypes = new List<MediaTypeHeaderValue>();
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("application/xml"));
             SupportedMediaTypes.Add(MediaTypeHeaderValue.Parse("text/xml"));
         }
+
+        /// <inheritdoc />
+        public IList<MediaTypeHeaderValue> SupportedMediaTypes { get; private set; }
+
+        /// <inheritdoc />
+        public IList<Encoding> SupportedEncodings { get; private set; }
 
         /// <summary>
         /// Indicates the acceptable input XML depth.
@@ -53,7 +63,7 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
         /// </summary>
         /// <param name="context">The input formatter context which contains the body to be read.</param>
         /// <returns>Task which reads the input.</returns>
-        public override async Task ReadAsync(InputFormatterContext context)
+        public async Task ReadAsync(InputFormatterContext context)
         {
             var request = context.HttpContext.Request;
             if (request.ContentLength == 0)

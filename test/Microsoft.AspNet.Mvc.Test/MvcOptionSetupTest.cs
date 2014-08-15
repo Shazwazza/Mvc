@@ -91,9 +91,9 @@ namespace Microsoft.AspNet.Mvc
 
             // Assert
             Assert.Equal(3, mvcOptions.InputFormatters.Count);
-            Assert.IsType<JsonInputFormatter>(mvcOptions.InputFormatters[0]);
-            Assert.IsType<XmlSerializerInputFormatter>(mvcOptions.InputFormatters[1]);
-            Assert.IsType<XmlDataContractSerializerInputFormatter>(mvcOptions.InputFormatters[2]);
+            Assert.IsType<JsonInputFormatter>(mvcOptions.InputFormatters[0].Instance);
+            Assert.IsType<XmlSerializerInputFormatter>(mvcOptions.InputFormatters[1].Instance);
+            Assert.IsType<XmlDataContractSerializerInputFormatter>(mvcOptions.InputFormatters[2].Instance);
         }
     }
 }

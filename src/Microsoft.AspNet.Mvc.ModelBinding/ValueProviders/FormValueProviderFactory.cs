@@ -27,8 +27,8 @@ namespace Microsoft.AspNet.Mvc.ModelBinding
 
         private bool IsSupportedContentType(HttpRequest request)
         {
-            var requestContentType = MediaTypeHeaderValue.Parse(request.ContentType);
-            return requestContentType != null &&
+            MediaTypeHeaderValue requestContentType = null;
+            return MediaTypeHeaderValue.TryParse(request.ContentType, out requestContentType) &&
                     _formEncodedContentType.IsSubsetOf(requestContentType);
         }
 
