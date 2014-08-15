@@ -14,7 +14,7 @@ namespace Microsoft.AspNet.Mvc
         {
             // Arrange
             var expected = "The type 'System.String' must derive from " +
-                            "'Microsoft.AspNet.Mvc.ModelBinding.IInputFormatter'.";
+                            "'Microsoft.AspNet.Mvc.IInputFormatter'.";
 
             var type = typeof(string);
 

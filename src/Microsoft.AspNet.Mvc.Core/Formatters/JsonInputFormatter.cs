@@ -2,7 +2,9 @@
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -68,6 +70,22 @@ namespace Microsoft.AspNet.Mvc
         /// the <see cref="ModelStateDictionary"/> instance of <see cref="InputFormatterContext"/>.
         /// </summary>
         public bool CaptureDeserilizationErrors { get; set; }
+
+        /// <inheritdoc />
+        public bool CanRead(InputFormatterContext context)
+        {
+            var contentType = context.ActionContext.HttpContext.Request.ContentType;
+            MediaTypeHeaderValue requestContentType = null;
+            if (!MediaTypeHeaderValue.TryParse(contentType, out requestContentType))
+            {
+                return false;
+            }
+
+            // Since requestContentType Type is going to be more specific check if requestContentType is a subset
+            // of the supportedMediaType.
+            return SupportedMediaTypes
+                            .Any(supportedMediaType => requestContentType.IsSubsetOf(supportedMediaType));
+        }
 
         /// <inheritdoc />
         public async Task<object> ReadAsync([NotNull] InputFormatterContext context)
