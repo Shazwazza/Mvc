@@ -17,12 +17,12 @@ namespace Microsoft.AspNet.Mvc
         /// Adds a type representing a <see cref="IInputFormatter"/> to a descriptor collection.
         /// </summary>
         /// <param name="descriptors">A list of InputFormatterDescriptors</param>
-        /// <param name="InputFormatterType">Type representing an <see cref="IInputFormatter"/>.</param>
+        /// <param name="inputFormatterType">Type representing an <see cref="IInputFormatter"/>.</param>
         /// <returns>InputFormatterDescriptor representing the added instance.</returns>
         public static InputFormatterDescriptor Add([NotNull] this IList<InputFormatterDescriptor> descriptors,
-                                                   [NotNull] Type InputFormatterType)
+                                                   [NotNull] Type inputFormatterType)
         {
-            var descriptor = new InputFormatterDescriptor(InputFormatterType);
+            var descriptor = new InputFormatterDescriptor(inputFormatterType);
             descriptors.Add(descriptor);
             return descriptor;
         }
@@ -31,18 +31,18 @@ namespace Microsoft.AspNet.Mvc
         /// Inserts a type representing a <see cref="IInputFormatter"/> to a descriptor collection.
         /// </summary>
         /// <param name="descriptors">A list of InputFormatterDescriptors</param>
-        /// <param name="InputFormatterType">Type representing an <see cref="IInputFormatter"/>.</param>
+        /// <param name="inputFormatterType">Type representing an <see cref="IInputFormatter"/>.</param>
         /// <returns>InputFormatterDescriptor representing the inserted instance.</returns>
         public static InputFormatterDescriptor Insert([NotNull] this IList<InputFormatterDescriptor> descriptors,
                                                       int index,
-                                                      [NotNull] Type InputFormatterType)
+                                                      [NotNull] Type inputFormatterType)
         {
             if (index < 0 || index > descriptors.Count)
             {
                 throw new ArgumentOutOfRangeException("index");
             }
 
-            var descriptor = new InputFormatterDescriptor(InputFormatterType);
+            var descriptor = new InputFormatterDescriptor(inputFormatterType);
             descriptors.Insert(index, descriptor);
             return descriptor;
         }
@@ -51,12 +51,12 @@ namespace Microsoft.AspNet.Mvc
         /// Adds an <see cref="IInputFormatter"/> to a descriptor collection.
         /// </summary>
         /// <param name="descriptors">A list of InputFormatterDescriptors</param>
-        /// <param name="InputFormatter">An <see cref="IInputFormatter"/> instance.</param>
+        /// <param name="inputFormatter">An <see cref="IInputFormatter"/> instance.</param>
         /// <returns>InputFormatterDescriptor representing the added instance.</returns>
         public static InputFormatterDescriptor Add([NotNull] this IList<InputFormatterDescriptor> descriptors,
-                                                   [NotNull] IInputFormatter InputFormatter)
+                                                   [NotNull] IInputFormatter inputFormatter)
         {
-            var descriptor = new InputFormatterDescriptor(InputFormatter);
+            var descriptor = new InputFormatterDescriptor(inputFormatter);
             descriptors.Add(descriptor);
             return descriptor;
         }
@@ -65,18 +65,18 @@ namespace Microsoft.AspNet.Mvc
         /// Insert an <see cref="IInputFormatter"/> to a descriptor collection.
         /// </summary>
         /// <param name="descriptors">A list of InputFormatterDescriptors</param>
-        /// <param name="InputFormatter">An <see cref="IInputFormatter"/> instance.</param>
+        /// <param name="inputFormatter">An <see cref="IInputFormatter"/> instance.</param>
         /// <returns>InputFormatterDescriptor representing the added instance.</returns>
         public static InputFormatterDescriptor Insert([NotNull] this IList<InputFormatterDescriptor> descriptors,
                                                       int index,
-                                                      [NotNull] IInputFormatter InputFormatter)
+                                                      [NotNull] IInputFormatter inputFormatter)
         {
             if (index < 0 || index > descriptors.Count)
             {
                 throw new ArgumentOutOfRangeException("index");
             }
 
-            var descriptor = new InputFormatterDescriptor(InputFormatter);
+            var descriptor = new InputFormatterDescriptor(inputFormatter);
             descriptors.Insert(index, descriptor);
             return descriptor;
         }

@@ -12,11 +12,5 @@ namespace FormatterWebSite.Controllers
         {
             return Content(dummyObject.SampleInt.ToString());
         }
-
-        [Produces("application/json")]
-        public object Som()
-        {
-            return new DummyClass() { SampleInt = 10 };
-        }
     }
 }
